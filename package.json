@@ -1,0 +1,22 @@
+{
+  "name": "algo-trading",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "node-cron": "^3.0.3",
+    "nodemon": "^3.1.0",
+    "smartapi-javascript": "^1.0.23"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
