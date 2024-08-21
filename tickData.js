@@ -5,7 +5,7 @@ import fs from 'fs';
 
 config();
 
-function scheduleExecutuion() {
+export function scheduleExecution() {
   let executionTime = millisecondsTillGivenTime("09:15");
   setTimeout(fetchData, executionTime);
 }
@@ -19,6 +19,8 @@ function fetchData() {
   });
 
   web_socket.connect().then((res) => {
+    console.log('WebSocket connected:', res);
+
     let json_req = {
       correlationID: "797",
       action: 1,
@@ -29,32 +31,48 @@ function fetchData() {
 
     web_socket.fetchData(json_req);
 
-    setTimeout(function () {
-      web_socket.close()
-    }, millisecondsTillGivenTime("15:30"));
+    // Schedule WebSocket closure
+    const closeTime = millisecondsTillGivenTime("15:30");
+    setTimeout(() => {
+      web_socket.close();
+    }, closeTime);
 
+    // Handle incoming data
     web_socket.on("tick", receiveTick);
+    
+    // Handle errors
+    web_socket.on("error", (error) => {
+      console.error("WebSocket error:", error);
+    });
+
+    // Handle WebSocket closure
+    web_socket.on("close", () => {
+      console.log("WebSocket closed");
+    });
+
+  }).catch((error) => {
+    console.error("WebSocket connection error:", error);
   });
 }
 
 function receiveTick(data) {
-  let last_traded_price = data.last_traded_price / 100;
-  let last_traded_quantity = data.last_traded_quantity;
-  let volume_traded = data.vol_traded;
-  let open = data.open_price_day / 100;
-  let high = data.high_price_day / 100;
-  let low = data.low_price_day / 100;
-  let close = data.close_price / 100;
-  let time = new Date(Number(data.exchange_timestamp))
+  const last_traded_price = data.last_traded_price / 100;
+  const last_traded_quantity = data.last_traded_quantity;
+  const volume_traded = data.vol_traded;
+  const open = data.open_price_day / 100;
+  const high = data.high_price_day / 100;
+  const low = data.low_price_day / 100;
+  const close = data.close_price / 100;
+  let time = new Date(Number(data.exchange_timestamp));
   time = isNaN(time.getTime()) ? "" : formatDate(time);
 
+  let line = `${last_traded_price},${time},${last_traded_quantity},${volume_traded},${open},${close},${high},${low}\n`;
+  
   if (data.token === '"26000"') {
-    let line = `${last_traded_price},${time},${last_traded_quantity},${volume_traded},${open},${close},${high},${low}\n`;
     fs.appendFile('NIFTY.txt', line, (err) => {
       if (err) throw err;
     });
   } else if (!isNaN(last_traded_price) && time !== "") {
-    let line = `${last_traded_price},${time},${last_traded_quantity},${volume_traded},${open},${close},${high},${low}\n`;
     fs.appendFile('SBIN.txt', line, (err) => {
       if (err) throw err;
     });
@@ -62,12 +80,12 @@ function receiveTick(data) {
 }
 
 function formatDate(date) {
-  let year = date.getFullYear();
-  let month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero-based
-  let day = ('0' + date.getDate()).slice(-2);
-  let hours = ('0' + date.getHours()).slice(-2);
-  let minutes = ('0' + date.getMinutes()).slice(-2);
-  let seconds = ('0' + date.getSeconds()).slice(-2);
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero-based
+  const day = ('0' + date.getDate()).slice(-2);
+  const hours = ('0' + date.getHours()).slice(-2);
+  const minutes = ('0' + date.getMinutes()).slice(-2);
+  const seconds = ('0' + date.getSeconds()).slice(-2);
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
