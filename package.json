@@ -4,7 +4,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon main.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,11 +13,7 @@
   "description": "",
   "dependencies": {
     "express": "^4.19.2",
-    "node-cron": "^3.0.3",
-    "nodemon": "^3.1.0",
-    "smartapi-javascript": "^1.0.23"
-  },
-  "devDependencies": {
+    "smartapi-javascript": "^1.0.23",
     "dotenv": "^16.4.5"
   }
 }

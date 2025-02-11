@@ -1,5 +1,7 @@
-node_modules
+node_modules/
 
 .env
 
-./src/files/*
+error.log
+
+src/files/*
