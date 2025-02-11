@@ -1,6 +1,6 @@
 // Function to fetch folders and display them
 async function fetchFolders() {
-    const response = await fetch('/get-folders');
+    const response = await fetch('/dev/get-folders');
     const folders = await response.json();
     const folderList = document.getElementById('folder-list');
 
@@ -28,7 +28,7 @@ async function fetchFolders() {
 
 // Function to fetch files in a folder and display them
 async function fetchFiles(folder) {
-    const response = await fetch(`/get-files?folder=${folder}`);
+    const response = await fetch(`/dev/get-files?folder=${folder}`);
     const files = await response.json();
     const folderList = document.getElementById('folder-list');
     folderList.innerHTML = ''; // Clear previous list
@@ -47,7 +47,7 @@ async function fetchFiles(folder) {
             ${file}
         `;
         fileDiv.onclick = () => {
-            window.open(`/download-file?folder=${folder}&file=${file}`, '_blank');
+            window.open(`/dev/download-file?folder=${folder}&file=${file}`, '_blank');
         };
         folderList.appendChild(fileDiv);
     });
