@@ -23,31 +23,31 @@ app.use(express.static('public')); // Serve static files from the public directo
 
 //? APIs
 // Serve index.html for the angel-login route
-app.get('/login', (req, res) => {
+app.get('/dev/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 // Get the password and totp and establish connection
-app.post('/submit', async (req, res) => {
+app.post('/dev/submit', async (req, res) => {
     const { password, totp } = req.body;
     const result = await establishConnection(password, totp);
     res.json(result);
 });
 
 // Get the execution status
-app.get('/is-execution-going-on', (req, res) => {
+app.get('/dev/is-execution-going-on', (req, res) => {
     const tokens = JSON.parse(fs.readFileSync('./src/tokens.json', 'utf-8'));
     const result = tokens.is_execution_going_on;
     res.json(result);
 });
 
 // Get the files
-app.get('/files', (req, res) => {
+app.get('/dev/files', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/files.html'));
 });
 
 // Get folders ending with _files
-app.get('/get-folders', (req, res) => {
+app.get('/dev/get-folders', (req, res) => {
     const folders = fs.readdirSync(path.join(__dirname, 'src/files'))
         .filter(file => fs.statSync(path.join(__dirname, 'src/files', file)).isDirectory() && file.endsWith('_files'))
         .map(folder => folder.replace(/_files$/, '')); // Trim _files from folder name
@@ -55,7 +55,7 @@ app.get('/get-folders', (req, res) => {
 });
 
 // Get files in a specific folder
-app.get('/get-files', (req, res) => {
+app.get('/dev/get-files', (req, res) => {
     const folder = req.query.folder;
     const files = fs.readdirSync(path.join(__dirname, 'src/files', `${folder}_files`))
         .filter(file => fs.statSync(path.join(__dirname, 'src/files', `${folder}_files`, file)).isFile());
@@ -63,7 +63,7 @@ app.get('/get-files', (req, res) => {
 });
 
 // Download a specific file
-app.get('/download-file', (req, res) => {
+app.get('/dev/download-file', (req, res) => {
     const { folder, file } = req.query;
     const filePath = path.join(__dirname, 'src/files', `${folder}_files`, file);
     res.download(filePath); // Send file for download
